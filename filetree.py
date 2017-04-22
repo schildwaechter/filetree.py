@@ -73,10 +73,12 @@ def tracing(a):
     files = []
     dirs = []
     for item in os.listdir(a):
-        if os.path.isfile(os.path.join(a, item)):
-            files.append(item)
-        else:
-            dirs.append(item)
+        ### do NOT trace links
+        if not os.path.islink(os.path.join(a, item)):
+            if os.path.isfile(os.path.join(a, item)):
+                files.append(item)
+            else:
+                dirs.append(item)
     for d in sorted(dirs):
         print ("<li data-path=\"", get_filepathlink(a, d), "\" title=\"Size: ", human_size(get_size(os.path.join(a, d))), "\">", d, "\n<ul>",sep="")
         tracing(os.path.join(a, d))
