@@ -139,33 +139,32 @@ def print_head():
         </span></h4>
         <div class="formarea">
 
-            <div class="row">
+          <div class="row">
 
             <div class="col-md-3">
-                <form id="search">
+              <form id="search">
                 <div class="input-group">
-                    <input type="text" id="treesearch" class="form-control" placeholder="Search for...">
-                    <span class="input-group-btn">
+                  <input type="text" id="treesearch" class="form-control" placeholder="Search for...">
+                  <span class="input-group-btn">
                     <button id="searchbutton" class="btn btn-default" type="submit">Go!</button>
-                    </span>
+                  </span>
                 </div>
-                </form>
+              </form>
             </div>
 
             <div class=\"col-md-1\">
-                <div class=\"checkbox\">
+              <div class=\"checkbox\">
                 <label><input type=\"checkbox\" class=\"checkbox-inline\" id=\"autosearch\" """,autosearch_string,""">Autosearch</label>
-                </div>
+              </div>
             </div>
 
             <div class="col-md-3">
-                <div class="input-group">
-                <span class="input-group-addon" id="sizing-addon2">Path</span>
-                <input type="text" class="form-control" id="selectedpath" placeholder="/" aria-describedby="sizing-addon2">
-                </div>
+              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#selectionModal">
+                Selection
+              </button>
             </div>
 
-            </div>
+          </div>
 
         </div>
         <div id=\"tree\">
@@ -175,6 +174,22 @@ def print_head():
 def print_bottom():
     print ("""
         </ul>
+        </div>
+        <div class="modal fade" id="selectionModal" tabindex="-1" role="dialog" aria-labelledby="selectionModalLabel">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="selectionModalLabel">Current selection</h4>
+              </div>
+              <div class="modal-body">
+                ...
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
         </div>
         """)
     if args.assets != None:
@@ -197,7 +212,7 @@ def print_bottom():
               $('#tree').jstree(true).search($('#treesearch').val());
           }
           $('#tree').jstree({
-            "plugins" : [ "search" ]
+            "plugins" : [ "search","checkbox" ]
           });
           $('#search').submit(function(e) {
               e.preventDefault();
@@ -218,6 +233,15 @@ def print_bottom():
                 }, 350);
               }
             });
+          });
+          $('#selectionModal').on('show.bs.modal', function (event) {
+            $(this).find('.modal-body').html("<pre></pre>");
+            var selectedElementsPaths = [];
+            var selectedElements = $('#tree').jstree("get_selected", true);
+            $.each(selectedElements, function() {
+              selectedElementsPaths.push(this.data.path+'\\n');
+            });
+            $(this).find('.modal-body pre').append(selectedElementsPaths);
           });
         </script>
     </body>
