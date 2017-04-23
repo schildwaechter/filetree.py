@@ -8,12 +8,15 @@ import argparse
 now = datetime.datetime.now()
 
 parser = argparse.ArgumentParser(description='Recurse directory into jsTree HTML.')
-parser.add_argument('-b', '--base', default='.',
-                   help='directory that is the base for the tree')
 parser.add_argument('-a', '--assets', default=None,
                    help='path to assets directory relative to html file for loading js and css locally')
+parser.add_argument('-b', '--base', default='.',
+                   help='directory that is the base for the tree')
 parser.add_argument('-p', '--prefix', default='',
                    help='absolute path prefix to add in paths')
+parser.add_argument('-r', '--restrict', dest='restrict', action='store_true',
+                   help='restrict to known files')
+parser.set_defaults(restrict=False)
 args = parser.parse_args()
 
 def human_size(number):
@@ -79,7 +82,7 @@ def tracing(a):
         tracing(os.path.join(a, d))
         print ("</ul></li>\n")
     for f in sorted(files):
-        if select_icon(f) != "glyphicon glyphicon-leaf":
+        if not (args.restrict and select_icon(f) == "glyphicon glyphicon-leaf"):
            print ("<li data-path=\"", get_filepathlink(a, f), "\" title=\"Size: ", human_size(os.path.getsize(os.path.join(a, f))), "\" data-jstree='{\"icon\":\"", select_icon(f), "\"}'>", f, "</li>\n",sep="")
 
 def print_head():
