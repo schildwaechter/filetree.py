@@ -7,7 +7,7 @@ This Python script recursively parses the directory it is run from and outputs a
 The script can be called from the command line
 
 ```
-usage: filetree.py [-h] [-a ASSETS] [-b BASE] [-p PREFIX] [-r]
+usage: filetree.py [-h] [-a ASSETS] [-b BASE] [-p PREFIX] [-r] [-t TITLE]
 
 Recurse directory into jsTree HTML.
 
@@ -20,6 +20,8 @@ optional arguments:
   -p PREFIX, --prefix PREFIX
                         absolute path prefix to add in paths
   -r, --restrict        restrict to known files
+  -t TITLE, --title TITLE
+                        title for the resulting document
 ```
 
 

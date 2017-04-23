@@ -17,6 +17,8 @@ parser.add_argument('-p', '--prefix', default='',
 parser.add_argument('-r', '--restrict', dest='restrict', action='store_true',
                    help='restrict to known files')
 parser.set_defaults(restrict=False)
+parser.add_argument('-t', '--title', default='Filetree',
+                   help='title for the resulting document')
 args = parser.parse_args()
 
 def human_size(number):
@@ -94,8 +96,7 @@ def print_head():
     <head>
         <meta charset=\"utf-8\">
         <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
-        <title>Filetree</title>
-        """)
+        <title>""",args.title,"</title>")
     if args.assets != None:
         print ("<link rel=\"stylesheet\" href=\"",args.assets,"bootstrap.min.css\">",sep="")
         print ("<link rel=\"stylesheet\" href=\"",args.assets,"bootstrap-theme.min.css\">",sep="")
@@ -121,7 +122,7 @@ def print_head():
         </style>
     </head>
     <body>
-        <h1>Filetree</h1>
+        <h1>""",args.title,"""</h1>
         <h4>Last Update: <span class="label label-info">
         """)
     print (now.strftime("%Y-%m-%d %H:%M"))
@@ -178,7 +179,6 @@ def print_bottom():
               }
           })
           $('#search').submit(function(e) {
-          console.log('duh');
               e.preventDefault();
               $('#tree').jstree('close_all');
               $('#tree').jstree(true).settings.search.show_only_matches = true;
