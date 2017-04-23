@@ -127,15 +127,23 @@ def print_head():
     print (now.strftime("%Y-%m-%d %H:%M"))
     print ("""
         </span></h4>
-        <form id="s">
-            <input type="search" id="treesearch" />
-            <button type="submit">Search</button>
-        </form>
-        <div class="col-md-3">
+        <div class="formarea">
+          <div class="col-md-3">
+            <form id="search">
+              <div class="input-group">
+                <input type="text" id="treesearch" class="form-control" placeholder="Search for...">
+                <span class="input-group-btn">
+                  <button id="searchbutton" class="btn btn-default" type="submit">Go!</button>
+                </span>
+              </div>
+            </form>
+          </div>
+          <div class="col-md-3">
             <div class="input-group">
-            <span class="input-group-addon" id="sizing-addon2">Path</span>
-            <input type="text" class="form-control" id="selectedpath" placeholder="/" aria-describedby="sizing-addon2">
+              <span class="input-group-addon" id="sizing-addon2">Path</span>
+              <input type="text" class="form-control" id="selectedpath" placeholder="/" aria-describedby="sizing-addon2">
             </div>
+          </div>
         </div>
         <div id=\"tree\">
         <ul>
@@ -159,7 +167,6 @@ def print_bottom():
 
     print ("""
         <script>
-        $(function () {
           $('#tree').jstree({
             "plugins" : [ "search" ]
           });
@@ -170,17 +177,18 @@ def print_bottom():
                   .end().end().end().find(".jstree-children").each(function () { $(this).children(".jstree-node:visible").eq(-1).addClass("jstree-last"); });
               }
           })
-          $('#s').submit(function(e) {
+          $('#search').submit(function(e) {
+          console.log('duh');
               e.preventDefault();
               $('#tree').jstree('close_all');
               $('#tree').jstree(true).settings.search.show_only_matches = true;
               $('#tree').jstree(true).search($('#treesearch').val());
+          });
           $('#tree').on('changed.jstree', function (e, data) {
             if(data && data.selected && data.selected.length) {
               $('#selectedpath').val(data.node.data.path);
             }
           });
-        });
         </script>
     </body>
     </html>
