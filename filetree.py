@@ -171,17 +171,11 @@ def print_bottom():
           $('#tree').jstree({
             "plugins" : [ "search" ]
           });
-          $('#tree').on('search.jstree before_open.jstree', function (e, data) {
-              if(data.instance.settings.search.show_only_matches) {
-                  data.instance._data.search.dom.find('.jstree-node')
-                  .show().filter('.jstree-last').filter(function() { return this.nextSibling; }).removeClass('jstree-last')
-                  .end().end().end().find(".jstree-children").each(function () { $(this).children(".jstree-node:visible").eq(-1).addClass("jstree-last"); });
-              }
-          })
           $('#search').submit(function(e) {
               e.preventDefault();
               $('#tree').jstree('close_all');
               $('#tree').jstree(true).settings.search.show_only_matches = true;
+              $('#tree').jstree(true).settings.search.show_only_matches_children = true;
               $('#tree').jstree(true).search($('#treesearch').val());
           });
           $('#tree').on('changed.jstree', function (e, data) {
