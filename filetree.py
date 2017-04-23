@@ -52,7 +52,9 @@ def select_icon(filename):
         return 'glyphicon glyphicon-picture'
     elif extension in ['.mp3','.ogg','.flac','m4a','.wav']:
         return 'glyphicon glyphicon-music'
-    elif extension in ['.mkv','.mp4','.avi','.flv','.mpg','.m2ts','.iso','.ISO','.wmv']:
+    elif extension in ['.iso','.img']:
+        return 'glyphicon glyphicon-cd'
+    elif extension in ['.mkv','.mp4','.avi','.flv','.mpg','.m2ts','.wmv']:
         return 'glyphicon glyphicon-film'
     elif extension in ['.srt']:
         return 'glyphicon glyphicon-subtitles'
