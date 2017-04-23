@@ -19,6 +19,11 @@ parser.add_argument('-r', '--restrict', dest='restrict', action='store_true',
 parser.set_defaults(restrict=False)
 parser.add_argument('-t', '--title', default='Filetree',
                    help='title for the resulting document')
+parser.add_argument('--autosearch-on', dest='autosearch', action='store_true',
+                   help='pre-enable autosearch (default)')
+parser.add_argument('--autosearch-off', dest='autosearch', action='store_false',
+                   help='autosearch not pre-enabled')
+parser.set_defaults(autosearch=True)
 args = parser.parse_args()
 
 def human_size(number):
@@ -126,25 +131,42 @@ def print_head():
         <h4>Last Update: <span class="label label-info">
         """)
     print (now.strftime("%Y-%m-%d %H:%M"))
+    if (args.autosearch):
+        autosearch_string = 'checked'
+    else:
+        autosearch_string = ''
     print ("""
         </span></h4>
         <div class="formarea">
-          <div class="col-md-3">
-            <form id="search">
-              <div class="input-group">
-                <input type="text" id="treesearch" class="form-control" placeholder="Search for...">
-                <span class="input-group-btn">
-                  <button id="searchbutton" class="btn btn-default" type="submit">Go!</button>
-                </span>
-              </div>
-            </form>
-          </div>
-          <div class="col-md-3">
-            <div class="input-group">
-              <span class="input-group-addon" id="sizing-addon2">Path</span>
-              <input type="text" class="form-control" id="selectedpath" placeholder="/" aria-describedby="sizing-addon2">
+
+            <div class="row">
+
+            <div class="col-md-3">
+                <form id="search">
+                <div class="input-group">
+                    <input type="text" id="treesearch" class="form-control" placeholder="Search for...">
+                    <span class="input-group-btn">
+                    <button id="searchbutton" class="btn btn-default" type="submit">Go!</button>
+                    </span>
+                </div>
+                </form>
             </div>
-          </div>
+
+            <div class=\"col-md-1\">
+                <div class=\"checkbox\">
+                <label><input type=\"checkbox\" class=\"checkbox-inline\" id=\"autosearch\" """,autosearch_string,""">Autosearch</label>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="input-group">
+                <span class="input-group-addon" id="sizing-addon2">Path</span>
+                <input type="text" class="form-control" id="selectedpath" placeholder="/" aria-describedby="sizing-addon2">
+                </div>
+            </div>
+
+            </div>
+
         </div>
         <div id=\"tree\">
         <ul>
@@ -168,20 +190,34 @@ def print_bottom():
 
     print ("""
         <script>
+          function searchFunction() {
+              $('#tree').jstree('close_all');
+              $('#tree').jstree(true).settings.search.show_only_matches = true;
+              $('#tree').jstree(true).settings.search.show_only_matches_children = true;
+              $('#tree').jstree(true).search($('#treesearch').val());
+          }
           $('#tree').jstree({
             "plugins" : [ "search" ]
           });
           $('#search').submit(function(e) {
               e.preventDefault();
-              $('#tree').jstree('close_all');
-              $('#tree').jstree(true).settings.search.show_only_matches = true;
-              $('#tree').jstree(true).settings.search.show_only_matches_children = true;
-              $('#tree').jstree(true).search($('#treesearch').val());
+              searchFunction();
           });
           $('#tree').on('changed.jstree', function (e, data) {
             if(data && data.selected && data.selected.length) {
               $('#selectedpath').val(data.node.data.path);
             }
+          });
+          $(function () {
+            var to = false;
+            $('#treesearch').keyup(function () {
+              if ($('#autosearch').is(':checked')) {
+                if(to) { clearTimeout(to); }
+                to = setTimeout(function () {
+                  searchFunction();
+                }, 350);
+              }
+            });
           });
         </script>
     </body>

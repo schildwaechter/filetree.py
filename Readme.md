@@ -8,6 +8,7 @@ The script can be called from the command line
 
 ```
 usage: filetree.py [-h] [-a ASSETS] [-b BASE] [-p PREFIX] [-r] [-t TITLE]
+                   [--autosearch-on] [--autosearch-off]
 
 Recurse directory into jsTree HTML.
 
@@ -22,6 +23,8 @@ optional arguments:
   -r, --restrict        restrict to known files
   -t TITLE, --title TITLE
                         title for the resulting document
+  --autosearch-on       pre-enable autosearch (default)
+  --autosearch-off      autosearch not pre-enabled
 ```
 
 
