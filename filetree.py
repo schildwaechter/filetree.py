@@ -4,6 +4,7 @@ import os
 import datetime
 import shlex
 import argparse
+import fnmatch
 
 now = datetime.datetime.now()
 
@@ -12,6 +13,10 @@ parser.add_argument('-a', '--assets', default=None,
                    help='path to assets directory relative to html file for loading js and css locally')
 parser.add_argument('-b', '--base', default='.',
                    help='directory that is the base for the tree')
+parser.add_argument('-e', '--exclude', action='append',
+                   help='exclude pattern (repeat as needed)')
+parser.add_argument('--exclude-from', dest='excludefrom', default=None,
+                   help='load exclude patterns from file')
 parser.add_argument('-p', '--prefix', default='',
                    help='absolute path prefix to add in paths')
 parser.add_argument('-r', '--restrict', dest='restrict', action='store_true',
@@ -25,6 +30,17 @@ parser.add_argument('--autosearch-off', dest='autosearch', action='store_false',
                    help='autosearch not pre-enabled')
 parser.set_defaults(autosearch=True)
 args = parser.parse_args()
+
+try:
+    if args.exclude is None:
+        args.exclude = []
+    if args.excludefrom is not None:
+        with open(args.excludefrom, "r") as ins:
+            for line in ins:
+                args.exclude.append(line.strip())
+except FileNotFoundError:
+    pass
+
 
 def human_size(number):
     supportedunits = ['B', 'KB', 'MB', 'GB', 'TB']
@@ -76,12 +92,18 @@ def select_icon(filename):
 def get_filepathlink(a,f):
     return shlex.quote(os.path.normpath(os.path.join(args.prefix, a, f)))
 
+def check_excluded(f):
+    for exclude_item in args.exclude:
+        if fnmatch.fnmatch(f, exclude_item) or  fnmatch.fnmatch(f, os.path.join(args.base,exclude_item)):
+            return True
+    return False
+
 def tracing(a):
     files = []
     dirs = []
     for item in os.listdir(a):
-        ### do NOT trace links
-        if not os.path.islink(os.path.join(a, item)):
+        ### do NOT trace links and check excludes
+        if not os.path.islink(os.path.join(a, item)) and not check_excluded(os.path.join(a, item)):
             if os.path.isfile(os.path.join(a, item)):
                 files.append(item)
             else:
@@ -253,3 +275,4 @@ if __name__ == "__main__":
     print_head()
     tracing(args.base)
     print_bottom()
+
